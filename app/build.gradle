@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -39,6 +40,12 @@ dependencies {
 
     // Add the Firebase SDK for Google Analytics
     implementation 'com.google.firebase:firebase-analytics:17.2.1'
+
+    // Add the SDK for Cloud Firestore
+    implementation 'com.google.firebase:firebase-firestore:21.3.1'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
