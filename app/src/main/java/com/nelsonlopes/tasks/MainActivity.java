@@ -190,11 +190,13 @@ public class MainActivity extends BaseActivity implements
     private void updateUI(FirebaseUser user) {
         hideProgressBar();
         if (user != null) {
-            mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
+            /*mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
 
             findViewById(R.id.signInButton).setVisibility(View.GONE);
-            findViewById(R.id.signOutAndDisconnect).setVisibility(View.VISIBLE);
+            findViewById(R.id.signOutAndDisconnect).setVisibility(View.VISIBLE);*/
+            // Successfull
+            // Sends user to Project's Activity
         } else {
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
