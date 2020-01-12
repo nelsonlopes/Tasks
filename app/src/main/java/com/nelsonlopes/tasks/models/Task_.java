@@ -1,13 +1,13 @@
 package com.nelsonlopes.tasks.models;
 
-public class Task {
+public class Task_ {
     private String documentId;
     private String name;
     private String projectId;
     private String userUid;
 
     // CONSTRUCTORS
-    public Task() {
+    public Task_() {
 
     }
 

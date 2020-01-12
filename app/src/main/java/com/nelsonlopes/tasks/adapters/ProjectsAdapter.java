@@ -1,6 +1,7 @@
 package com.nelsonlopes.tasks.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,9 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nelsonlopes.tasks.MainActivity;
 import com.nelsonlopes.tasks.R;
+import com.nelsonlopes.tasks.TasksActivity;
 import com.nelsonlopes.tasks.models.Project;
 
 import java.util.List;
@@ -54,6 +57,14 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
         Button delete_project = holder.view.findViewById(R.id.delete_project);
 
         projectName.setText(mProjects.get(position).getName());
+        projectName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, TasksActivity.class);
+                intent.putExtra("project_id", mProjects.get(position).getDocumentId());
+                mContext.startActivity(intent);
+            }
+        });
         delete_project.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

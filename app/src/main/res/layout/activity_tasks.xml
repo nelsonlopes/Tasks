@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="16dp"
-    tools:context=".ProjectsActivity">
+    tools:context=".TasksActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,23 +15,23 @@
         android:layout_marginBottom="16dp">
 
         <EditText
-            android:id="@+id/et_project_name"
+            android:id="@+id/et_task_name"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:ems="10"
             android:layout_weight="2"/>
 
         <Button
-            android:id="@+id/bt_submit_project"
+            android:id="@+id/bt_submit_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Add Project" />
+            android:text="Add Task" />
 
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_projects"
+        android:id="@+id/rv_tasks"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
