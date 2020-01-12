@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,7 +79,9 @@ public class ProjectsActivity extends AppCompatActivity {
 
     @OnClick(R.id.bt_submit_project)
     public void SubmitProject(View view) {
-        AddProject(projectNameEt.getText().toString());
+        if (!TextUtils.isEmpty(projectNameEt.getText().toString().trim())) {
+            AddProject(projectNameEt.getText().toString());
+        }
     }
 
     private void AddProject(String projectName) {

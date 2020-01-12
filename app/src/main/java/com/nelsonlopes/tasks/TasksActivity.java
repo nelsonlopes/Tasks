@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -91,7 +92,9 @@ public class TasksActivity extends AppCompatActivity {
 
     @OnClick(R.id.bt_submit_task)
     public void SubmitTask(View view) {
-        AddTask(taskNameEt.getText().toString());
+        if (!TextUtils.isEmpty(taskNameEt.getText().toString().trim())) {
+            AddTask(taskNameEt.getText().toString());
+        }
     }
 
     private void AddTask(String taskName) {
