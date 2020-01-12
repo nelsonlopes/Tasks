@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,10 +66,14 @@ public class ProjectsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
-        super.onResume();
+    public void onStart(){
+        super.onStart();
 
-        ListProjects();
+        if (MainActivity.status == 0) {
+            ListProjects();
+        } else {
+            finish();
+        }
     }
 
     @OnClick(R.id.bt_submit_project)
@@ -136,5 +142,27 @@ public class ProjectsActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem signOut = menu.findItem(R.id.sign_out);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.sign_out:
+                MainActivity.status = 1;
+                finish();
+                return true;
+            default:
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

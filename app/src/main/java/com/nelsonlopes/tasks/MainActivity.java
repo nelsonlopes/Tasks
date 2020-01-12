@@ -58,6 +58,7 @@ public class MainActivity extends BaseActivity implements
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
     private TextView mDetailTextView;
+    public static int status = 0;
 
     public static FirebaseFirestore db;
 
@@ -73,8 +74,8 @@ public class MainActivity extends BaseActivity implements
 
         // Button listeners
         findViewById(R.id.signInButton).setOnClickListener(this);
-        findViewById(R.id.signOutButton).setOnClickListener(this);
-        findViewById(R.id.disconnectButton).setOnClickListener(this);
+        //findViewById(R.id.signOutButton).setOnClickListener(this);
+        //findViewById(R.id.disconnectButton).setOnClickListener(this);
 
         // [START config_signin]
         // Configure Google Sign In
@@ -97,10 +98,24 @@ public class MainActivity extends BaseActivity implements
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+        if (status == 0) {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            updateUI(currentUser);
+        } else {
+            signOut();
+            status = 0;
+        }
     }
     // [END on_start_check_user]
+
+    /*@Override
+    public void onResume(){
+        super.onResume();
+
+        if (status == 1) {
+
+        }
+    }*/
 
     // [START onactivityresult]
     @Override
@@ -164,7 +179,7 @@ public class MainActivity extends BaseActivity implements
     }
     // [END signin]
 
-    private void signOut() {
+    public void signOut() {
         // Firebase sign out
         mAuth.signOut();
 
@@ -178,7 +193,7 @@ public class MainActivity extends BaseActivity implements
                 });
     }
 
-    private void revokeAccess() {
+    /*private void revokeAccess() {
         // Firebase sign out
         mAuth.signOut();
 
@@ -190,9 +205,9 @@ public class MainActivity extends BaseActivity implements
                         updateUI(null);
                     }
                 });
-    }
+    }*/
 
-    private void updateUI(FirebaseUser user) {
+    public void updateUI(FirebaseUser user) {
         hideProgressBar();
         if (user != null) {
             // Successfull
@@ -210,7 +225,7 @@ public class MainActivity extends BaseActivity implements
             Intent intent = new Intent(MainActivity.this, ProjectsActivity.class);
             startActivity(intent);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
+            //mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
 
             findViewById(R.id.signInButton).setVisibility(View.VISIBLE);
@@ -223,10 +238,10 @@ public class MainActivity extends BaseActivity implements
         int i = v.getId();
         if (i == R.id.signInButton) {
             signIn();
-        } else if (i == R.id.signOutButton) {
+        } /*else if (i == R.id.signOutButton) {
             signOut();
         } else if (i == R.id.disconnectButton) {
             revokeAccess();
-        }
+        }*/
     }
 }
