@@ -1,6 +1,7 @@
 package com.nelsonlopes.tasks.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -62,22 +64,44 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
         delete_task.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.db.collection("tasks").document(mTasks.get(position).getDocumentId())
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("DELETE", "DocumentSnapshot successfully deleted!");
-                                mTasks.remove(position);
-                                setTasks(mTasks);
+                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+                // 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage("Delete \"" + mTasks.get(position).getName() + "\"?")
+                        //.setTitle("Task deletion confirmation")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                MainActivity.db.collection("tasks")
+                                        .document(mTasks.get(position).getDocumentId())
+                                        .delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("DELETE", "DocumentSnapshot successfully deleted!");
+                                                mTasks.remove(position);
+                                                setTasks(mTasks);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("DELETE", "Error deleting document", e);
+                                            }
+                                        });
                             }
                         })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("DELETE", "Error deleting document", e);
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
                             }
                         });
+
+                // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+                AlertDialog dialog = builder.create();
+
+                dialog.show();
             }
         });
     }
