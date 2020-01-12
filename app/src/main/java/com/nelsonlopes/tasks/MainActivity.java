@@ -38,6 +38,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import butterknife.ButterKnife;
 //import com.google.firebase.quickstart.auth.R;
 
 /**
@@ -56,6 +58,8 @@ public class MainActivity extends BaseActivity implements
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
     private TextView mDetailTextView;
+
+    public static FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +204,7 @@ public class MainActivity extends BaseActivity implements
             findViewById(R.id.signOutAndDisconnect).setVisibility(View.VISIBLE);*/
 
             // Access a Cloud Firestore instance from your Activity
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db = FirebaseFirestore.getInstance();
 
             // Sends user to Project's Activity
             Intent intent = new Intent(MainActivity.this, ProjectsActivity.class);
