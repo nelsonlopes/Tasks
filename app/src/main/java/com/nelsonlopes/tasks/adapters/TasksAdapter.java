@@ -1,6 +1,7 @@
 package com.nelsonlopes.tasks.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,8 +9,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.nelsonlopes.tasks.MainActivity;
 import com.nelsonlopes.tasks.R;
 import com.nelsonlopes.tasks.models.Task_;
 
@@ -57,7 +62,22 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
         delete_task.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, "DELETE TASK", Toast.LENGTH_SHORT).show();
+                MainActivity.db.collection("tasks").document(mTasks.get(position).getDocumentId())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("DELETE", "DocumentSnapshot successfully deleted!");
+                                mTasks.remove(position);
+                                setTasks(mTasks);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("DELETE", "Error deleting document", e);
+                            }
+                        });
             }
         });
     }
