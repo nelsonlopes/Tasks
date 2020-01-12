@@ -68,9 +68,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
                 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setMessage("Delete \"" + mTasks.get(position).getName() + "\"?")
+                builder.setMessage("Delete " + mTasks.get(position).getName() + "?")
                         //.setTitle("Task deletion confirmation")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button
                                 MainActivity.db.collection("tasks")
@@ -92,7 +92,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                                         });
                             }
                         })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User cancelled the dialog
                             }

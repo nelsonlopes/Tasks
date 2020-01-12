@@ -1,7 +1,9 @@
 package com.nelsonlopes.tasks.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +11,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.nelsonlopes.tasks.MainActivity;
 import com.nelsonlopes.tasks.R;
 import com.nelsonlopes.tasks.TasksActivity;
@@ -69,7 +75,44 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
         delete_project.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, "DELETE", Toast.LENGTH_SHORT).show();
+                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+                // 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage("Delete " + mProjects.get(position).getName() + " and its tasks?")
+                        //.setTitle("Task deletion confirmation")
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                MainActivity.db.collection("projects")
+                                        .document(mProjects.get(position).getDocumentId())
+                                        .delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("DELETE", "DocumentSnapshot successfully deleted!");
+                                                mProjects.remove(position);
+                                                setProjects(mProjects);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("DELETE", "Error deleting document", e);
+                                            }
+                                        });
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+
+                // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+                AlertDialog dialog = builder.create();
+
+                dialog.show();
             }
         });
     }
