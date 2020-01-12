@@ -62,6 +62,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, TasksActivity.class);
                 intent.putExtra("project_id", mProjects.get(position).getDocumentId());
+                intent.putExtra("project_name", mProjects.get(position).getName());
                 mContext.startActivity(intent);
             }
         });

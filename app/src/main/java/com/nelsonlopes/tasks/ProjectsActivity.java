@@ -51,6 +51,8 @@ public class ProjectsActivity extends AppCompatActivity {
         // Bind the view using Butter Knife
         ButterKnife.bind(this);
 
+        getSupportActionBar().setTitle("Projects");
+
         mProjects = new ArrayList<>();
 
         mLayoutManager = new LinearLayoutManager(this);

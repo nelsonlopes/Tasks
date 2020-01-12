@@ -48,6 +48,7 @@ public class TasksActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String projectId;
+    private String projectName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,10 @@ public class TasksActivity extends AppCompatActivity {
         }
 
         projectId = intent.getStringExtra("project_id");
+        projectName = intent.getStringExtra("project_name");
         //Toast.makeText(this, projectId, Toast.LENGTH_LONG).show();
+
+        getSupportActionBar().setTitle(projectName);
 
         mTasks = new ArrayList<>();
 
