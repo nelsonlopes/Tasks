@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -60,6 +59,11 @@ public class ProjectsActivity extends AppCompatActivity {
                 DividerItemDecoration.HORIZONTAL));
         mAdapter = new ProjectsAdapter(this, mProjects);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
 
         ListProjects();
     }
@@ -73,6 +77,7 @@ public class ProjectsActivity extends AppCompatActivity {
         // Create a new project
         Map<String, Object> project = new HashMap<>();
         project.put("project_name", projectName);
+        project.put("user_uid", MainActivity.mAuth.getCurrentUser().getUid());
 
         // Add a new document with a generated ID
         MainActivity.db.collection("projects")
@@ -80,10 +85,15 @@ public class ProjectsActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        Project project = new Project();
-                        project.setName(projectNameEt.getText().toString());
-                        mProjects.add(project);
+                        //Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+
+                        Project newProject = new Project();
+
+                        newProject.setDocumentId(documentReference.getId());
+                        newProject.setName(projectName);
+                        newProject.setUserUid(MainActivity.mAuth.getCurrentUser().getUid());
+
+                        mProjects.add(newProject);
                         ((ProjectsAdapter) mAdapter).setProjects(mProjects);
 
                         projectNameEt.setText("");
@@ -99,15 +109,21 @@ public class ProjectsActivity extends AppCompatActivity {
 
     private void ListProjects() {
         MainActivity.db.collection("projects")
+                .whereEqualTo("user_uid", MainActivity.mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                //Log.d(TAG, document.getId() + " => " + document.getData());
+
                                 Project project = new Project();
+
+                                project.setDocumentId(document.getString("document_id"));
                                 project.setName(document.getString("project_name"));
+                                project.setUserUid(document.getString("user_uid"));
+
                                 mProjects.add(project);
                                 ((ProjectsAdapter) mAdapter).setProjects(mProjects);
                             }

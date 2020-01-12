@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     // [START declare_auth]
-    private FirebaseAuth mAuth;
+    public static FirebaseAuth mAuth;
     // [END declare_auth]
 
     private GoogleSignInClient mGoogleSignInClient;
