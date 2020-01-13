@@ -15,12 +15,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.nelsonlopes.tasks.MainActivity;
 import com.nelsonlopes.tasks.R;
 import com.nelsonlopes.tasks.TasksActivity;
 import com.nelsonlopes.tasks.models.Project;
+import com.nelsonlopes.tasks.models.Task_;
 
 import java.util.List;
 
@@ -84,6 +89,42 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
                         .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button
+
+                                // Delete the tasks inside this project
+                                MainActivity.db.collection("tasks")
+                                        .whereEqualTo("project_id", mProjects.get(position).getDocumentId())
+                                        .whereEqualTo("user_uid", MainActivity.mAuth.getCurrentUser().getUid())
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        //Log.d(TAG, document.getId() + " => " + document.getData());
+                                                        MainActivity.db.collection("tasks")
+                                                                .document(document.getId())
+                                                                .delete()
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Log.d("DELETE", "DocumentSnapshot successfully deleted!");
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        //Log.w("DELETE", "Error deleting document", e);
+                                                                    }
+                                                                });
+
+                                                    }
+                                                } else {
+                                                    //Log.w(TAG, "Error getting documents.", task.getException());
+                                                }
+                                            }
+                                        });
+
+                                // Delete the project
                                 MainActivity.db.collection("projects")
                                         .document(mProjects.get(position).getDocumentId())
                                         .delete()
