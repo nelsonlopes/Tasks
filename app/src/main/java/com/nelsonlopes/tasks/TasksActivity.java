@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -103,6 +104,7 @@ public class TasksActivity extends AppCompatActivity {
         task.put("task_name", taskName);
         task.put("project_id", projectId);
         task.put("user_uid", MainActivity.mAuth.getCurrentUser().getUid());
+        task.put("complete", false);
 
         // Add a new document with a generated ID
         MainActivity.db.collection("tasks")
@@ -128,7 +130,7 @@ public class TasksActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                        //Log.w(TAG, "Error adding document", e);
                     }
                 });
     }
@@ -137,6 +139,7 @@ public class TasksActivity extends AppCompatActivity {
         MainActivity.db.collection("tasks")
                 .whereEqualTo("project_id", projectId)
                 .whereEqualTo("user_uid", MainActivity.mAuth.getCurrentUser().getUid())
+                .whereEqualTo("complete", false)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

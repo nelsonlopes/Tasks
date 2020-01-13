@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.nelsonlopes.tasks.MainActivity;
 import com.nelsonlopes.tasks.R;
 import com.nelsonlopes.tasks.models.Task_;
@@ -57,11 +61,52 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
     public void onBindViewHolder(final TasksAdapter.MyViewHolder holder, int position) {
         // - get element from the dataset at this position
         // - replace the contents of the view with that
-        TextView taskName = holder.view.findViewById(R.id.task_name);
-        Button delete_task = holder.view.findViewById(R.id.delete_task);
+        RadioGroup radioGroup = holder.view.findViewById(R.id.radioGroup);
+        RadioButton taskName = holder.view.findViewById(R.id.rd_task);
+        Button deleteTask = holder.view.findViewById(R.id.delete_task);
 
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                // This will get the radiobutton that has changed in its check state
+                RadioButton checkedRadioButton = group.findViewById(R.id.rd_task);
+                // This puts the value (true/false) into the variable
+                boolean isChecked = checkedRadioButton.isChecked();
+                // If the radiobutton that has changed in check state is now checked...
+                if (isChecked)
+                {
+                    // Changes the textview's text to "Checked: example radiobutton text"
+                    DocumentReference documentReference = MainActivity.db.collection("tasks")
+                            .document(mTasks.get(position).getDocumentId());
+                    documentReference.update("complete", true)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(mContext,"Task completed",Toast.LENGTH_LONG).show();
+
+                                    mTasks.remove(position);
+                                    setTasks(mTasks);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
+                                    Log.d("Androidview", e.getMessage());
+                                }
+                            });
+                }
+            }
+        });
         taskName.setText(mTasks.get(position).getName());
-        delete_task.setOnClickListener(new View.OnClickListener() {
+
+        taskName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        deleteTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
