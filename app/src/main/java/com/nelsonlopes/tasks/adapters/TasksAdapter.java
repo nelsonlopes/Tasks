@@ -62,6 +62,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
         // - get element from the dataset at this position
         // - replace the contents of the view with that
         RadioGroup radioGroup = holder.view.findViewById(R.id.radioGroup);
+        radioGroup.clearCheck(); // after checking the first, there was always one that was checked without being checked by the user
         RadioButton taskName = holder.view.findViewById(R.id.rd_task);
         Button deleteTask = holder.view.findViewById(R.id.delete_task);
 
