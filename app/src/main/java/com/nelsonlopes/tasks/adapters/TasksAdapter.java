@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,7 +30,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
 
     // Provide a reference to the views for each data item
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public View view;
+        private View view;
 
         public MyViewHolder(View v) {
             super(v);
@@ -93,7 +91,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
-                                    Log.d("Androidview", e.getMessage());
+                                    //Log.d("Androidview", e.getMessage());
                                 }
                             });
                 }
@@ -125,7 +123,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                Log.d("DELETE", "DocumentSnapshot successfully deleted!");
+                                                //Log.d("DELETE", "DocumentSnapshot successfully deleted!");
                                                 mTasks.remove(position);
                                                 setTasks(mTasks);
                                             }
@@ -133,7 +131,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Log.w("DELETE", "Error deleting document", e);
+                                                //Log.w("DELETE", "Error deleting document", e);
                                             }
                                         });
                             }

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,15 +36,20 @@ import butterknife.OnClick;
 
 public class ProjectsActivity extends AppCompatActivity {
 
-    private static final String TAG = "PROJECTS";
+    private static final String TAG = ProjectsActivity.class.toString();
+    public static final String KEY_PROJECT_NAME = "project_name";
+    public static final String KEY_USER_UID = "user_uid";
+    private static final String KEY_PROJECTS = "projects";
 
-    @BindView(R.id.rv_projects) RecyclerView recyclerView;
-    @BindView(R.id.et_project_name) EditText projectNameEt;
-    @BindView(R.id.bt_submit_project) Button submitProject;
+    @BindView(R.id.rv_projects)
+    RecyclerView recyclerView;
+    @BindView(R.id.et_project_name)
+    EditText projectNameEt;
+    @BindView(R.id.bt_submit_project)
+    Button submitProject;
 
     private List<Project> mProjects = null;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +63,7 @@ public class ProjectsActivity extends AppCompatActivity {
 
         mProjects = new ArrayList<>();
 
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
                 DividerItemDecoration.VERTICAL));
@@ -85,19 +90,18 @@ public class ProjectsActivity extends AppCompatActivity {
     }
 
     private void AddProject(String projectName) {
-        // Create a new project
+        // Create a new Project
         Map<String, Object> project = new HashMap<>();
-        project.put("project_name", projectName);
-        project.put("user_uid", MainActivity.mAuth.getCurrentUser().getUid());
+        project.put(KEY_PROJECT_NAME, projectName);
+        project.put(KEY_USER_UID, MainActivity.mAuth.getCurrentUser().getUid());
 
         // Add a new document with a generated ID
-        MainActivity.db.collection("projects")
+        MainActivity.db.collection(KEY_PROJECTS)
                 .add(project)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         //Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-
                         Project newProject = new Project();
 
                         newProject.setDocumentId(documentReference.getId());
@@ -113,14 +117,14 @@ public class ProjectsActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                        //Log.w(TAG, "Error adding document", e);
                     }
                 });
     }
 
     private void ListProjects() {
-        MainActivity.db.collection("projects")
-                .whereEqualTo("user_uid", MainActivity.mAuth.getCurrentUser().getUid())
+        MainActivity.db.collection(KEY_PROJECTS)
+                .whereEqualTo(KEY_USER_UID, MainActivity.mAuth.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -134,14 +138,14 @@ public class ProjectsActivity extends AppCompatActivity {
                                 Project project = new Project();
 
                                 project.setDocumentId(document.getId());
-                                project.setName(document.getString("project_name"));
-                                project.setUserUid(document.getString("user_uid"));
+                                project.setName(document.getString(KEY_PROJECT_NAME));
+                                project.setUserUid(document.getString(KEY_USER_UID));
 
                                 mProjects.add(project);
                                 ((ProjectsAdapter) mAdapter).setProjects(mProjects);
                             }
                         } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
+                            //Log.w(TAG, "Error getting documents.", task.getException());
                         }
                     }
                 });

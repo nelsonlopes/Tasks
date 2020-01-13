@@ -16,4 +16,6 @@
 
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
+
+    <string name="error_message">Project data not available.</string>
 </resources>

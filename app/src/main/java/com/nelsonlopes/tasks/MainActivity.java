@@ -39,11 +39,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import butterknife.ButterKnife;
-//import com.google.firebase.quickstart.auth.R;
-
 /**
- * Demonstrate Firebase Authentication using a Google ID Token.
+ * Firebase Authentication using a Google ID Token.
  */
 public class MainActivity extends BaseActivity implements
         View.OnClickListener {
@@ -51,15 +48,12 @@ public class MainActivity extends BaseActivity implements
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    // [START declare_auth]
-    public static FirebaseAuth mAuth;
-    // [END declare_auth]
-
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
     private TextView mDetailTextView;
-    public static int status = 0;
 
+    public static FirebaseAuth mAuth;
+    public static int status = 0;
     public static FirebaseFirestore db;
 
     @Override
@@ -74,8 +68,6 @@ public class MainActivity extends BaseActivity implements
 
         // Button listeners
         findViewById(R.id.signInButton).setOnClickListener(this);
-        //findViewById(R.id.signOutButton).setOnClickListener(this);
-        //findViewById(R.id.disconnectButton).setOnClickListener(this);
 
         // [START config_signin]
         // Configure Google Sign In
@@ -97,8 +89,9 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+
         if (status == 0) {
+            // Check if user is signed in (non-null) and update UI accordingly.
             FirebaseUser currentUser = mAuth.getCurrentUser();
             updateUI(currentUser);
         } else {
@@ -107,15 +100,6 @@ public class MainActivity extends BaseActivity implements
         }
     }
     // [END on_start_check_user]
-
-    /*@Override
-    public void onResume(){
-        super.onResume();
-
-        if (status == 1) {
-
-        }
-    }*/
 
     // [START onactivityresult]
     @Override
@@ -153,13 +137,13 @@ public class MainActivity extends BaseActivity implements
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                            // Sign in success, update UI
+                            //Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            //Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             updateUI(null);
                         }
@@ -211,13 +195,6 @@ public class MainActivity extends BaseActivity implements
         hideProgressBar();
         if (user != null) {
             // Successfull
-
-            /*mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
-            findViewById(R.id.signInButton).setVisibility(View.GONE);
-            findViewById(R.id.signOutAndDisconnect).setVisibility(View.VISIBLE);*/
-
             // Access a Cloud Firestore instance from your Activity
             db = FirebaseFirestore.getInstance();
 
@@ -225,23 +202,18 @@ public class MainActivity extends BaseActivity implements
             Intent intent = new Intent(MainActivity.this, ProjectsActivity.class);
             startActivity(intent);
         } else {
-            //mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
 
             findViewById(R.id.signInButton).setVisibility(View.VISIBLE);
-            findViewById(R.id.signOutAndDisconnect).setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
+
         if (i == R.id.signInButton) {
             signIn();
-        } /*else if (i == R.id.signOutButton) {
-            signOut();
-        } else if (i == R.id.disconnectButton) {
-            revokeAccess();
-        }*/
+        }
     }
 }

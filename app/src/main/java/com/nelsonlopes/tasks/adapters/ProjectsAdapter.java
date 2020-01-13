@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -25,7 +24,6 @@ import com.nelsonlopes.tasks.MainActivity;
 import com.nelsonlopes.tasks.R;
 import com.nelsonlopes.tasks.TasksActivity;
 import com.nelsonlopes.tasks.models.Project;
-import com.nelsonlopes.tasks.models.Task_;
 
 import java.util.List;
 
@@ -107,7 +105,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void aVoid) {
-                                                                        Log.d("DELETE", "DocumentSnapshot successfully deleted!");
+                                                                        //Log.d("DELETE", "DocumentSnapshot successfully deleted!");
                                                                     }
                                                                 })
                                                                 .addOnFailureListener(new OnFailureListener() {
@@ -131,7 +129,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                Log.d("DELETE", "DocumentSnapshot successfully deleted!");
+                                                //Log.d("DELETE", "DocumentSnapshot successfully deleted!");
                                                 mProjects.remove(position);
                                                 setProjects(mProjects);
                                             }
@@ -139,7 +137,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Log.w("DELETE", "Error deleting document", e);
+                                                //Log.w("DELETE", "Error deleting document", e);
                                             }
                                         });
                             }

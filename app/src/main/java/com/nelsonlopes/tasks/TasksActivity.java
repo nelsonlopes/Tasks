@@ -9,13 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,9 +36,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.nelsonlopes.tasks.ProjectsActivity.KEY_PROJECT_NAME;
+import static com.nelsonlopes.tasks.ProjectsActivity.KEY_USER_UID;
+
 public class TasksActivity extends AppCompatActivity {
 
-    private static final String TAG = "PROJECTS";
+    private static final String TAG = TasksActivity.class.toString();
 
     @BindView(R.id.rv_tasks)
     RecyclerView recyclerView;
@@ -50,9 +52,13 @@ public class TasksActivity extends AppCompatActivity {
 
     private List<Task_> mTasks = null;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private String projectId;
     private String projectName;
+
+    private static final String KEY_PROJECT_ID = "project_id";
+    private static final String KEY_TASK_NAME = "task_name";
+    private static final String KEY_COMPLETE = "complete";
+    private static final String KEY_TASKS = "tasks";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +70,19 @@ public class TasksActivity extends AppCompatActivity {
 
         // Get project id from Intent
         Intent intent = getIntent();
+
         if (intent == null) {
             closeOnError();
         }
 
-        projectId = intent.getStringExtra("project_id");
-        projectName = intent.getStringExtra("project_name");
-        //Toast.makeText(this, projectId, Toast.LENGTH_LONG).show();
+        projectId = intent.getStringExtra(KEY_PROJECT_ID);
+        projectName = intent.getStringExtra(KEY_PROJECT_NAME);
 
         getSupportActionBar().setTitle(projectName);
 
         mTasks = new ArrayList<>();
 
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
                 DividerItemDecoration.VERTICAL));
@@ -99,21 +105,20 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void AddTask(String taskName) {
-        // Create a new project
+        // Add a new Task
         Map<String, Object> task = new HashMap<>();
-        task.put("task_name", taskName);
-        task.put("project_id", projectId);
-        task.put("user_uid", MainActivity.mAuth.getCurrentUser().getUid());
-        task.put("complete", false);
+        task.put(KEY_TASK_NAME, taskName);
+        task.put(KEY_PROJECT_ID, projectId);
+        task.put(KEY_USER_UID, MainActivity.mAuth.getCurrentUser().getUid());
+        task.put(KEY_COMPLETE, false);
 
         // Add a new document with a generated ID
-        MainActivity.db.collection("tasks")
+        MainActivity.db.collection(KEY_TASKS)
                 .add(task)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         //Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-
                         Task_ newTask = new Task_();
 
                         newTask.setDocumentId(documentReference.getId());
@@ -136,10 +141,10 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void ListTasks() {
-        MainActivity.db.collection("tasks")
-                .whereEqualTo("project_id", projectId)
-                .whereEqualTo("user_uid", MainActivity.mAuth.getCurrentUser().getUid())
-                .whereEqualTo("complete", false)
+        MainActivity.db.collection(KEY_TASKS)
+                .whereEqualTo(KEY_PROJECT_ID, projectId)
+                .whereEqualTo(KEY_USER_UID, MainActivity.mAuth.getCurrentUser().getUid())
+                .whereEqualTo(KEY_COMPLETE, false)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -149,19 +154,18 @@ public class TasksActivity extends AppCompatActivity {
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 //Log.d(TAG, document.getId() + " => " + document.getData());
-
                                 Task_ task_ = new Task_();
 
                                 task_.setDocumentId(document.getId());
-                                task_.setName(document.getString("task_name"));
-                                task_.setProjectId(document.getString("project_id"));
-                                task_.setUserUid(document.getString("user_uid"));
+                                task_.setName(document.getString(KEY_TASK_NAME));
+                                task_.setProjectId(document.getString(KEY_PROJECT_ID));
+                                task_.setUserUid(document.getString(KEY_USER_UID));
 
                                 mTasks.add(task_);
                                 ((TasksAdapter) mAdapter).setTasks(mTasks);
                             }
                         } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
+                            //Log.w(TAG, "Error getting documents.", task.getException());
                         }
                     }
                 });
@@ -191,6 +195,6 @@ public class TasksActivity extends AppCompatActivity {
 
     private void closeOnError() {
         this.finish();
-        //Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show();
     }
 }
