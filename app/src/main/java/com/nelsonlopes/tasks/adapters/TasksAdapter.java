@@ -64,6 +64,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
         RadioGroup radioGroup = holder.view.findViewById(R.id.radioGroup);
         RadioButton radioButton = holder.view.findViewById(R.id.rd_task);
         TextView taskName = holder.view.findViewById(R.id.task_name);
+        Button editTask = holder.view.findViewById(R.id.edit_task);
         Button deleteTask = holder.view.findViewById(R.id.delete_task);
 
         // Complete Task
@@ -104,8 +105,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
 
         // Set Task Name
         taskName.setText(mTasks.get(position).getName());
-        // Edit Task Name
-        taskName.setOnClickListener(new View.OnClickListener() {
+
+        // Edit Task
+        editTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final EditText edittext = new EditText(mContext);
