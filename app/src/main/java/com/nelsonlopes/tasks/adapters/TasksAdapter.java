@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -60,10 +62,12 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
         // - get element from the dataset at this position
         // - replace the contents of the view with that
         RadioGroup radioGroup = holder.view.findViewById(R.id.radioGroup);
-        radioGroup.clearCheck(); // after checking the first, there was always one that was checked without being checked by the user
-        RadioButton taskName = holder.view.findViewById(R.id.rd_task);
+        RadioButton radioButton = holder.view.findViewById(R.id.rd_task);
+        TextView taskName = holder.view.findViewById(R.id.task_name);
         Button deleteTask = holder.view.findViewById(R.id.delete_task);
 
+        // Complete Task
+        radioGroup.clearCheck(); // after checking the first, there was always one that was checked without being checked by the user
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId)
             {
@@ -97,14 +101,57 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                 }
             }
         });
-        taskName.setText(mTasks.get(position).getName());
 
+        // Set Task Name
+        taskName.setText(mTasks.get(position).getName());
+        // Edit Task Name
         taskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final EditText edittext = new EditText(mContext);
+                edittext.setText(mTasks.get(position).getName());
 
+                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+                AlertDialog.Builder builderEdit = new AlertDialog.Builder(mContext);
+
+                // 2. Chain together various setter methods to set the dialog characteristics
+                builderEdit.setView(edittext)
+                        .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                DocumentReference documentReference = MainActivity.db.collection("tasks")
+                                        .document(mTasks.get(position).getDocumentId());
+                                documentReference.update("task_name", edittext.getText().toString())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                mTasks.get(position).setName(edittext.getText().toString());
+                                                setTasks(mTasks);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
+                                                //Log.d("Androidview", e.getMessage());
+                                            }
+                                        });
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+
+                // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+                AlertDialog dialogEdit = builderEdit.create();
+
+                dialogEdit.show();
             }
         });
+
+        // Delete Task
         deleteTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

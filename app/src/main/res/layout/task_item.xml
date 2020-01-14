@@ -6,9 +6,8 @@
     android:layout_height="50dp">
 
     <RadioGroup
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical"
         android:layout_gravity="start|center_vertical"
         android:gravity="center_vertical"
@@ -23,6 +22,14 @@
             android:textSize="16sp" />
 
     </RadioGroup>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/task_name"
+        android:layout_weight="1"
+        android:layout_gravity="start|center_vertical"
+        android:gravity="center_vertical" />
 
     <Button
         android:layout_width="24dp"
