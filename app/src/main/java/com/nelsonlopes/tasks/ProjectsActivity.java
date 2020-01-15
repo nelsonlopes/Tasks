@@ -1,11 +1,13 @@
 package com.nelsonlopes.tasks;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 //import android.util.Log;
@@ -14,11 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -36,17 +40,19 @@ import butterknife.OnClick;
 
 public class ProjectsActivity extends AppCompatActivity {
 
-    private static final String TAG = ProjectsActivity.class.toString();
+    //private static final String TAG = ProjectsActivity.class.toString();
     public static final String KEY_PROJECT_NAME = "project_name";
     public static final String KEY_USER_UID = "user_uid";
     private static final String KEY_PROJECTS = "projects";
 
     @BindView(R.id.rv_projects)
     RecyclerView recyclerView;
-    @BindView(R.id.et_project_name)
+    @BindView(R.id.add_project_fab)
+    FloatingActionButton addProjectFab;
+    /*@BindView(R.id.et_project_name)
     EditText projectNameEt;
     @BindView(R.id.bt_submit_project)
-    Button submitProject;
+    Button submitProject;*/
 
     private List<Project> mProjects = null;
     private RecyclerView.Adapter mAdapter;
@@ -82,11 +88,40 @@ public class ProjectsActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.bt_submit_project)
+    /*@OnClick(R.id.bt_submit_project)
     public void SubmitProject(View view) {
         if (!TextUtils.isEmpty(projectNameEt.getText().toString().trim())) {
             AddProject(projectNameEt.getText().toString());
         }
+    }*/
+
+    @OnClick(R.id.add_project_fab)
+    public void AddProjectFab(View view) {
+        final EditText edittext = new EditText(this);
+
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builderEdit = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builderEdit.setView(edittext)
+                .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        if (!TextUtils.isEmpty(edittext.getText().toString().trim())) {
+                            AddProject(edittext.getText().toString());
+                        }
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        AlertDialog dialogEdit = builderEdit.create();
+
+        dialogEdit.show();
     }
 
     private void AddProject(String projectName) {
@@ -111,7 +146,7 @@ public class ProjectsActivity extends AppCompatActivity {
                         mProjects.add(newProject);
                         ((ProjectsAdapter) mAdapter).setProjects(mProjects);
 
-                        projectNameEt.setText("");
+                        //projectNameEt.setText("");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

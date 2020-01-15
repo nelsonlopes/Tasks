@@ -5,4 +5,9 @@
 
     <dimen name="title_bottom_margin">16dp</dimen>
     <dimen name="button_horizontal_margin">8dp</dimen>
+
+    <!-- FAB -->
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_press_translation_z">6dp</dimen>
+    <dimen name="fab_margin">24dp</dimen>
 </resources>
