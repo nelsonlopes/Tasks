@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="16dp"
+    tools:context=".TasksActivity">
+
+<!--<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -28,11 +38,30 @@
             android:layout_weight="1"
             android:text="Add Task" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tasks"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_task_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_24px"
+        app:fabSize="normal"
+        android:contentDescription="@string/action_add_task"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/add_fab_background"
+        app:elevation="@dimen/fab_elevation"
+        app:pressedTranslationZ="@dimen/fab_press_translation_z"
+        app:borderWidth="0dp"
+        app:layout_anchor="@id/rv_tasks"
+        app:layout_anchorGravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin" />
+
+<!--</LinearLayout>-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

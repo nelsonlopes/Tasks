@@ -3,6 +3,7 @@ package com.nelsonlopes.tasks.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +81,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
             }
         });
 
-        // Edit Task
+        // Edit Project
         editProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,23 +96,26 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
                         .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button
-                                DocumentReference documentReference = MainActivity.db.collection("projects")
-                                        .document(mProjects.get(position).getDocumentId());
-                                documentReference.update("project_name", edittext.getText().toString())
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                mProjects.get(position).setName(edittext.getText().toString());
-                                                setProjects(mProjects);
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
-                                                //Log.d("Androidview", e.getMessage());
-                                            }
-                                        });
+                                if (!TextUtils.isEmpty(edittext.getText().toString().trim())) {
+                                    DocumentReference documentReference = MainActivity.db.collection("projects")
+                                            .document(mProjects.get(position).getDocumentId());
+                                    documentReference.update("project_name", edittext.getText().toString())
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    mProjects.get(position).setName(edittext.getText().toString());
+                                                    setProjects(mProjects);
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
+                                                    //Log.d("Androidview", e.getMessage());
+                                                }
+                                            });
+                                }
+
                             }
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

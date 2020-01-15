@@ -8,44 +8,11 @@
     android:layout_margin="16dp"
     tools:context=".ProjectsActivity">
 
-    <!--<LinearLayout
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_projects"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp"
-        tools:context=".ProjectsActivity">-->
+        android:layout_height="match_parent" />
 
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/et_project_name"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:ems="10"
-                android:layout_weight="2"/>
-
-            <Button
-                android:id="@+id/bt_submit_project"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Add Project" />
-
-        </LinearLayout>-->
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_projects"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    <!--</LinearLayout>-->
-
-    <!-- <android.support.design.widget.FloatingActionButton -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_project_fab"
         android:layout_width="wrap_content"
@@ -54,6 +21,7 @@
         app:fabSize="normal"
         android:contentDescription="@string/action_add_project"
         android:clickable="true"
+        android:focusable="true"
         android:background="@drawable/add_fab_background"
         app:elevation="@dimen/fab_elevation"
         app:pressedTranslationZ="@dimen/fab_press_translation_z"

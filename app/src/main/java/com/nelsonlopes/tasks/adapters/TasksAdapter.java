@@ -2,6 +2,7 @@ package com.nelsonlopes.tasks.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -121,23 +122,26 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                         .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button
-                                DocumentReference documentReference = MainActivity.db.collection("tasks")
-                                        .document(mTasks.get(position).getDocumentId());
-                                documentReference.update("task_name", edittext.getText().toString())
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                mTasks.get(position).setName(edittext.getText().toString());
-                                                setTasks(mTasks);
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
-                                                //Log.d("Androidview", e.getMessage());
-                                            }
-                                        });
+                                if (!TextUtils.isEmpty(edittext.getText().toString().trim())) {
+                                    DocumentReference documentReference = MainActivity.db.collection("tasks")
+                                            .document(mTasks.get(position).getDocumentId());
+                                    documentReference.update("task_name", edittext.getText().toString())
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    mTasks.get(position).setName(edittext.getText().toString());
+                                                    setTasks(mTasks);
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
+                                                    //Log.d("Androidview", e.getMessage());
+                                                }
+                                            });
+                                }
+
                             }
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

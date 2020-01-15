@@ -14,9 +14,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -49,10 +47,6 @@ public class ProjectsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     @BindView(R.id.add_project_fab)
     FloatingActionButton addProjectFab;
-    /*@BindView(R.id.et_project_name)
-    EditText projectNameEt;
-    @BindView(R.id.bt_submit_project)
-    Button submitProject;*/
 
     private List<Project> mProjects = null;
     private RecyclerView.Adapter mAdapter;
@@ -88,13 +82,6 @@ public class ProjectsActivity extends AppCompatActivity {
         }
     }
 
-    /*@OnClick(R.id.bt_submit_project)
-    public void SubmitProject(View view) {
-        if (!TextUtils.isEmpty(projectNameEt.getText().toString().trim())) {
-            AddProject(projectNameEt.getText().toString());
-        }
-    }*/
-
     @OnClick(R.id.add_project_fab)
     public void AddProjectFab(View view) {
         final EditText edittext = new EditText(this);
@@ -104,6 +91,7 @@ public class ProjectsActivity extends AppCompatActivity {
 
         // 2. Chain together various setter methods to set the dialog characteristics
         builderEdit.setView(edittext)
+                .setTitle("Add Project")
                 .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button

@@ -1,11 +1,13 @@
 package com.nelsonlopes.tasks;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,10 +48,12 @@ public class TasksActivity extends AppCompatActivity {
 
     @BindView(R.id.rv_tasks)
     RecyclerView recyclerView;
-    @BindView(R.id.et_task_name)
+    /*@BindView(R.id.et_task_name)
     EditText taskNameEt;
     @BindView(R.id.bt_submit_task)
-    Button submitTask;
+    Button submitTask;*/
+    @BindView(R.id.add_task_fab)
+    FloatingActionButton addTaskFab;
 
     private List<Task_> mTasks = null;
     private RecyclerView.Adapter mAdapter;
@@ -97,11 +102,41 @@ public class TasksActivity extends AppCompatActivity {
         ListTasks();
     }
 
-    @OnClick(R.id.bt_submit_task)
+    /*@OnClick(R.id.bt_submit_task)
     public void SubmitTask(View view) {
         if (!TextUtils.isEmpty(taskNameEt.getText().toString().trim())) {
             AddTask(taskNameEt.getText().toString());
         }
+    }*/
+
+    @OnClick(R.id.add_task_fab)
+    public void AddTaskFab(View view) {
+        final EditText edittext = new EditText(this);
+
+        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+        AlertDialog.Builder builderEdit = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builderEdit.setView(edittext)
+                .setTitle("Add Task")
+                .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        if (!TextUtils.isEmpty(edittext.getText().toString().trim())) {
+                            AddTask(edittext.getText().toString());
+                        }
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+        // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+        AlertDialog dialogEdit = builderEdit.create();
+
+        dialogEdit.show();
     }
 
     private void AddTask(String taskName) {
@@ -129,7 +164,7 @@ public class TasksActivity extends AppCompatActivity {
                         mTasks.add(newTask);
                         ((TasksAdapter) mAdapter).setTasks(mTasks);
 
-                        taskNameEt.setText("");
+                        //taskNameEt.setText("");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

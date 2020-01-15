@@ -21,4 +21,5 @@
 
     <!-- FAB -->
     <string name="action_add_project">Add Project</string>
+    <string name="action_add_task">Add Task</string>
 </resources>
