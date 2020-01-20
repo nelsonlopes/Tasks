@@ -231,8 +231,6 @@ public class TasksActivity extends AppCompatActivity {
     void startWidgetService()
     {
         mProject.setTasks(mTasks);
-        //Toast.makeText(this, String.valueOf(mTasks.size()), Toast.LENGTH_LONG).show();
-        //Toast.makeText(this, String.valueOf(mProject.getTasks().size()), Toast.LENGTH_LONG).show();
 
         Intent intent = new Intent(this, WidgetUpdateService.class);
         intent.putExtra(this.getResources().getString(R.string.parcel_project), mProject);

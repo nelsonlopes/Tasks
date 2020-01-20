@@ -30,9 +30,6 @@ public class WidgetUpdateService extends IntentService {
             Project project = intent.getParcelableExtra(getString(R.string.parcel_project));
             mTasks = project.getTasks();
 
-            Log.d("WIDGET SERVICE TASKS", String.valueOf(mTasks.size()));
-            Log.d("WIDGET SERVICE PROJECT", String.valueOf(project.getTasks().size()));
-
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, TasksProvider.class));
             TasksProvider.updateAppWidget(this, appWidgetManager, appWidgetIds, mTasks);
