@@ -177,20 +177,6 @@ public class MainActivity extends BaseActivity implements
                 });
     }
 
-    /*private void revokeAccess() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
-    }*/
-
     public void updateUI(FirebaseUser user) {
         hideProgressBar();
         if (user != null) {

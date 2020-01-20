@@ -20,9 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.nelsonlopes.tasks.MainActivity;
 import com.nelsonlopes.tasks.R;
+import com.nelsonlopes.tasks.TasksActivity;
 import com.nelsonlopes.tasks.models.Task_;
 
 import java.util.List;
@@ -80,6 +82,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                 // If the radiobutton that has changed in check state is now checked...
                 if (isChecked)
                 {
+                    Task_ taskCompleted = mTasks.get(position);
+
                     // Changes the textview's text to "Checked: example radiobutton text"
                     DocumentReference documentReference = MainActivity.db.collection("tasks")
                             .document(mTasks.get(position).getDocumentId());
@@ -87,7 +91,40 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(mContext,"Task completed",Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(mContext,"Task completed",Toast.LENGTH_LONG).show();
+                                    Snackbar snackbar = Snackbar
+                                            .make(TasksActivity.coordinatorLayout, "Task completed", Snackbar.LENGTH_LONG)
+                                            .setAction("UNDO", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    // Restores task
+                                                    DocumentReference documentReference = MainActivity.db.collection("tasks")
+                                                            .document(taskCompleted.getDocumentId());
+                                                    documentReference.update("complete", false)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    //Toast.makeText(mContext,"Task completed",Toast.LENGTH_LONG).show();
+                                                                    Snackbar snackbarRestore = Snackbar
+                                                                            .make(TasksActivity.coordinatorLayout, "Task restored", Snackbar.LENGTH_LONG);
+
+                                                                    snackbarRestore.show();
+
+                                                                    mTasks.add(taskCompleted);
+                                                                    setTasks(mTasks);
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_LONG).show();
+                                                                    //Log.d("Androidview", e.getMessage());
+                                                                }
+                                                            });
+                                                }
+                                            });
+
+                                    snackbar.show();
 
                                     mTasks.remove(position);
                                     setTasks(mTasks);
@@ -119,6 +156,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.MyViewHolder
 
                 // 2. Chain together various setter methods to set the dialog characteristics
                 builderEdit.setView(edittext)
+                        .setTitle("Edit Task")
                         .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button

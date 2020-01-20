@@ -75,8 +75,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, TasksActivity.class);
-                intent.putExtra("project_id", mProjects.get(position).getDocumentId());
-                intent.putExtra("project_name", mProjects.get(position).getName());
+                intent.putExtra(mContext.getResources().getString(R.string.parcel_project), mProjects.get(position));
+
                 mContext.startActivity(intent);
             }
         });
@@ -93,6 +93,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
 
                 // 2. Chain together various setter methods to set the dialog characteristics
                 builderEdit.setView(edittext)
+                        .setTitle("Edit Project")
                         .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button

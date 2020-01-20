@@ -3,6 +3,7 @@ package com.nelsonlopes.tasks;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +16,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -28,7 +28,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.nelsonlopes.tasks.adapters.TasksAdapter;
+import com.nelsonlopes.tasks.models.Project;
 import com.nelsonlopes.tasks.models.Task_;
+import com.nelsonlopes.tasks.widget.WidgetUpdateService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,31 +41,26 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.nelsonlopes.tasks.ProjectsActivity.KEY_PROJECT_NAME;
 import static com.nelsonlopes.tasks.ProjectsActivity.KEY_USER_UID;
 
 public class TasksActivity extends AppCompatActivity {
 
     private static final String TAG = TasksActivity.class.toString();
+    public static final String KEY_PROJECT_ID = "project_id";
+    public static final String KEY_TASK_NAME = "task_name";
+    public static final String KEY_COMPLETE = "complete";
+    public static final String KEY_TASKS = "tasks";
 
     @BindView(R.id.rv_tasks)
     RecyclerView recyclerView;
-    /*@BindView(R.id.et_task_name)
-    EditText taskNameEt;
-    @BindView(R.id.bt_submit_task)
-    Button submitTask;*/
     @BindView(R.id.add_task_fab)
     FloatingActionButton addTaskFab;
 
     private List<Task_> mTasks = null;
     private RecyclerView.Adapter mAdapter;
-    private String projectId;
-    private String projectName;
+    private Project mProject;
 
-    private static final String KEY_PROJECT_ID = "project_id";
-    private static final String KEY_TASK_NAME = "task_name";
-    private static final String KEY_COMPLETE = "complete";
-    private static final String KEY_TASKS = "tasks";
+    public static CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +70,17 @@ public class TasksActivity extends AppCompatActivity {
         // Bind the view using Butter Knife
         ButterKnife.bind(this);
 
-        // Get project id from Intent
-        Intent intent = getIntent();
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
+        // Get Project from Intent
+        Intent intent = getIntent();
         if (intent == null) {
             closeOnError();
         }
 
-        projectId = intent.getStringExtra(KEY_PROJECT_ID);
-        projectName = intent.getStringExtra(KEY_PROJECT_NAME);
+        mProject = intent.getParcelableExtra(getString(R.string.parcel_project));
 
-        getSupportActionBar().setTitle(projectName);
+        getSupportActionBar().setTitle(mProject.getName());
 
         mTasks = new ArrayList<>();
 
@@ -93,6 +90,11 @@ public class TasksActivity extends AppCompatActivity {
                 DividerItemDecoration.VERTICAL));
         mAdapter = new TasksAdapter(this, mTasks);
         recyclerView.setAdapter(mAdapter);
+
+        // Start Widget's Service, which is going to update the widget's list with the
+        // tasks data
+        ListTasks();
+        startWidgetService();
     }
 
     @Override
@@ -101,13 +103,6 @@ public class TasksActivity extends AppCompatActivity {
 
         ListTasks();
     }
-
-    /*@OnClick(R.id.bt_submit_task)
-    public void SubmitTask(View view) {
-        if (!TextUtils.isEmpty(taskNameEt.getText().toString().trim())) {
-            AddTask(taskNameEt.getText().toString());
-        }
-    }*/
 
     @OnClick(R.id.add_task_fab)
     public void AddTaskFab(View view) {
@@ -143,7 +138,7 @@ public class TasksActivity extends AppCompatActivity {
         // Add a new Task
         Map<String, Object> task = new HashMap<>();
         task.put(KEY_TASK_NAME, taskName);
-        task.put(KEY_PROJECT_ID, projectId);
+        task.put(KEY_PROJECT_ID, mProject.getDocumentId());
         task.put(KEY_USER_UID, MainActivity.mAuth.getCurrentUser().getUid());
         task.put(KEY_COMPLETE, false);
 
@@ -158,7 +153,7 @@ public class TasksActivity extends AppCompatActivity {
 
                         newTask.setDocumentId(documentReference.getId());
                         newTask.setName(taskName);
-                        newTask.setProjectId(projectId);
+                        newTask.setProjectId(mProject.getDocumentId());
                         newTask.setUserUid(MainActivity.mAuth.getCurrentUser().getUid());
 
                         mTasks.add(newTask);
@@ -177,7 +172,7 @@ public class TasksActivity extends AppCompatActivity {
 
     private void ListTasks() {
         MainActivity.db.collection(KEY_TASKS)
-                .whereEqualTo(KEY_PROJECT_ID, projectId)
+                .whereEqualTo(KEY_PROJECT_ID, mProject.getDocumentId())
                 .whereEqualTo(KEY_USER_UID, MainActivity.mAuth.getCurrentUser().getUid())
                 .whereEqualTo(KEY_COMPLETE, false)
                 .get()
@@ -226,6 +221,20 @@ public class TasksActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * This will trigger WidgetUpdateService to update the Widget
+     * to the last recipe that the user has seen
+     */
+    void startWidgetService()
+    {
+        mProject.setTasks(mTasks);
+
+        Intent intent = new Intent(this, WidgetUpdateService.class);
+        intent.putExtra(this.getResources().getString(R.string.parcel_project), mProject);
+        intent.setAction(WidgetUpdateService.WIDGET_UPDATE_ACTION);
+        this.startService(intent);
     }
 
     private void closeOnError() {
