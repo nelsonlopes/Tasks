@@ -23,7 +23,7 @@
         <service
             android:name=".widget.ListViewService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
-        <service android:name="widget.WidgetUpdateService"/>
+        <service android:name=".widget.WidgetUpdateService"/>
 
         <activity android:name=".TasksActivity" />
         <activity android:name=".ProjectsActivity" />

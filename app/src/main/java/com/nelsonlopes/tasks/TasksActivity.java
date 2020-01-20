@@ -90,11 +90,6 @@ public class TasksActivity extends AppCompatActivity {
                 DividerItemDecoration.VERTICAL));
         mAdapter = new TasksAdapter(this, mTasks);
         recyclerView.setAdapter(mAdapter);
-
-        // Start Widget's Service, which is going to update the widget's list with the
-        // tasks data
-        ListTasks();
-        startWidgetService();
     }
 
     @Override
@@ -159,7 +154,9 @@ public class TasksActivity extends AppCompatActivity {
                         mTasks.add(newTask);
                         ((TasksAdapter) mAdapter).setTasks(mTasks);
 
-                        //taskNameEt.setText("");
+                        // Start Widget's Service, which is going to update the widget's list with the
+                        // tasks data
+                        startWidgetService();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -194,6 +191,10 @@ public class TasksActivity extends AppCompatActivity {
                                 mTasks.add(task_);
                                 ((TasksAdapter) mAdapter).setTasks(mTasks);
                             }
+
+                            // Start Widget's Service, which is going to update the widget's list with the
+                            // tasks data
+                            startWidgetService();
                         } else {
                             //Log.w(TAG, "Error getting documents.", task.getException());
                         }
@@ -230,6 +231,8 @@ public class TasksActivity extends AppCompatActivity {
     void startWidgetService()
     {
         mProject.setTasks(mTasks);
+        //Toast.makeText(this, String.valueOf(mTasks.size()), Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, String.valueOf(mProject.getTasks().size()), Toast.LENGTH_LONG).show();
 
         Intent intent = new Intent(this, WidgetUpdateService.class);
         intent.putExtra(this.getResources().getString(R.string.parcel_project), mProject);
